@@ -22,7 +22,7 @@ function varargout = Display(varargin)
 
 % Edit the above text to modify the response to help Display
 
-% Last Modified by GUIDE v2.5 24-May-2022 19:36:44
+% Last Modified by GUIDE v2.5 24-May-2022 20:11:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -75,7 +75,7 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
-Image=imread('1.jpg');
+Image=imread('Zombatar_1.jpg');
 axes(handles.Origin);
 imshow(Image);
 % hObject    handle to pushbutton1 (see GCBO)
@@ -131,7 +131,173 @@ C = abs(ifft2(B));
 % subplot(224)
 axes(handles.Filtered1);
 imshow(uint8(C));
-title('Filtered Image');
+title('GLP image');
 % hObject    handle to pushbutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton3.
+function pushbutton3_Callback(hObject, eventdata, handles)
+Image1=getimage(handles.Origin);
+imdata1=rgb2gray(Image1);
+[m,n]=size(imdata1);
+%Set the cut-off frequency
+Fc=3;
+
+%Determine the centre of image
+p= round(m/2);
+q= round(n/2);
+
+%Define the filter kernel
+
+H=zeros(m,n);
+for i=1:m
+    for j=1:n
+        d = (i-p).^2+(j-q).^2;
+        H(i,j) = exp(-d/2/Fc/Fc);
+    end
+end
+H=H-1;
+
+%Input image in frequecy domain
+
+A_f = fftshift(fft2(imdata1));
+
+%Apply Gaussian HPF
+
+B = A_f.*H;
+C = abs(ifft2(B));
+
+%Display the output  and input image
+
+% subplot(221);
+% imshow(imdata);
+% title('Origin Image');
+% subplot(222);
+% imshow(H);
+% title('2D view of H');
+% subplot(223);
+% surf(H);
+% title('3D view of H');
+% subplot(224)
+axes(handles.Filtered2);
+imshow(uint8(C));
+title('GHP Image');
+% hObject    handle to pushbutton3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton4.
+function pushbutton4_Callback(hObject, eventdata, handles)
+Image1=getimage(handles.Origin);
+imdata1=rgb2gray(Image1);
+[m,n]=size(imdata1);
+
+%Set the cut-off frequency
+Fc=100; 
+
+%Set the filter order
+N=10;
+
+%Determine the centre of image
+p= round(m/2);
+q= round(n/2);
+
+%Define the filter kernel
+
+H=zeros(m,n);
+for i=1:m
+    for j=1:n
+        d = (i-p).^2+(j-q).^2;     
+        H(i,j) = 1/(1+((d/Fc/Fc).^(2*N)));
+    end
+end
+
+
+%Input image in frequecy domain
+
+A_f = fftshift(fft2(imdata1));
+
+%Apply Butterworth LPF
+
+B = A_f.*H;
+C = abs(ifft2(B));
+
+%Display the output  and input image
+% 
+% subplot(221);
+% imshow(imdata);
+% title('Origin Image');
+% subplot(222);
+% imshow(H);
+% title('2D view of H');
+% subplot(223);
+% surf(H);
+% title('3D view of H');
+% subplot(224)
+axes(handles.Filtered3);
+imshow(uint8(C));
+title('IIR LP Image');
+% hObject    handle to pushbutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton5.
+function pushbutton5_Callback(hObject, eventdata, handles)
+Image1=getimage(handles.Origin);
+imdata=rgb2gray(Image1);
+[m,n]=size(imdata);
+
+%Set the cut-off frequency
+Fc=20; 
+
+%Set the filter order
+N=1;
+
+%Determine the centre of image
+p= round(m/2);
+q= round(n/2);
+
+%Define the filter kernel
+
+H=zeros(m,n);
+for i=1:m
+    for j=1:n
+        d = (i-p).^2+(j-q).^2;
+        if d~=0
+        H(i,j) = 1/(1+((Fc*Fc/d).^(2*N)));
+        end
+    end
+end
+
+
+%Input image in frequecy domain
+
+A_f = fftshift(fft2(imdata));
+
+%Apply Butterworth HPF
+
+B = A_f.*H;
+C = abs(ifft2(B));
+
+%Display the output  and input image
+
+% subplot(221);
+% imshow(imdata);
+% title('Origin Image');
+% subplot(222);
+% imshow(H);
+% title('2D view of H');
+% subplot(223);
+% surf(H);
+% title('3D view of H');
+% subplot(224)
+axes(handles.Filtered4);
+imshow(uint8(C));
+title('IIR HP Image');
+% hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
