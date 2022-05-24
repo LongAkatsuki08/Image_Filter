@@ -32,7 +32,7 @@ A_f = fftshift(fft2(imdata1));
 %Apply the Gaussian low pass filter 
 
 B = A_f.*H;
-C = abs(ifft2(B));
+C1 = abs(ifft2(B));
 
 %Display the output  and input image
 subplot(221);
@@ -46,5 +46,5 @@ subplot(223);
 surf(H)
 title('3D view of H');
 subplot(224)
-imshow(uint8(C));
+imshow(uint8(C1));
 title('Filtered Image');
