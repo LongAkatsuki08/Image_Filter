@@ -22,7 +22,7 @@ function varargout = Display(varargin)
 
 % Edit the above text to modify the response to help Display
 
-% Last Modified by GUIDE v2.5 24-May-2022 20:11:40
+% Last Modified by GUIDE v2.5 06-Jun-2022 15:00:19
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -42,7 +42,6 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
-
 
 % --- Executes just before Display is made visible.
 function Display_OpeningFcn(hObject, eventdata, handles, varargin)
@@ -75,7 +74,9 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
-Image=imread('Zombatar_1.jpg');
+[name,path] = uigetfile({'*.*';'*.jpg';'*.png'},'Choose pic to open');
+ Image = [path name];
+ Image = imread(Image);
 axes(handles.Origin);
 imshow(Image);
 % hObject    handle to pushbutton1 (see GCBO)
@@ -85,32 +86,30 @@ imshow(Image);
 
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
-Image1=getimage(handles.Origin);
-imdata1=rgb2gray(Image1);
-[m,n,z]=size(imdata1);
-
+imdata=getimage(handles.Origin);
+[m,n,z]=size(imdata);
+if (z==3)
+imdata=rgb2gray(imdata);
+[m,n,z]=size(imdata);
+end
 %Set the cut-off frequency
-Fc=90;
-
+data=get(handles.slider4,'Value');
 %Determine the centre of image
 p= round(m/2);
 q= round(n/2);
-o= round(z/2);
 
 %Define the filter kernel
-H=zeros(m,n,z);
+H=zeros(m,n);
 for i=1:m
     for j=1:n
-        for k=1:o
-        d = (i-p).^2+(j-q).^2+(k-o).^2;
-        H(i,j,k) = exp(-d/2/Fc/Fc);
-        end
+        d = (i-p).^2+(j-q).^2;
+        H(i,j) = exp(-d/2/data/data);
     end
 end
 
 %Input image in frequecy domain
 
-A_f = fftshift(fft2(imdata1));
+A_f = fftshift(fft2(imdata));
 
 %Apply the Gaussian low pass filter 
 
@@ -139,11 +138,14 @@ title('GLP image');
 
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
-Image1=getimage(handles.Origin);
-imdata1=rgb2gray(Image1);
-[m,n]=size(imdata1);
+imdata=getimage(handles.Origin);
+[m,n,z]=size(imdata);
+if (z==3)
+imdata=rgb2gray(imdata);
+[m,n,z]=size(imdata);
+end
 %Set the cut-off frequency
-Fc=3;
+data=get(handles.slider4,'Value');
 
 %Determine the centre of image
 p= round(m/2);
@@ -155,18 +157,18 @@ H=zeros(m,n);
 for i=1:m
     for j=1:n
         d = (i-p).^2+(j-q).^2;
-        H(i,j) = exp(-d/2/Fc/Fc);
+        H(i,j) = exp(-d/2/data/data);
     end
 end
 H=H-1;
 
 %Input image in frequecy domain
 
-A_f = fftshift(fft2(imdata1));
+A_f = fftshift(fft2(imdata));
 
 %Apply Gaussian HPF
 
-B = A_f.*H;
+B = A_f.*H;     
 C = abs(ifft2(B));
 
 %Display the output  and input image
@@ -191,13 +193,14 @@ title('GHP Image');
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
-Image1=getimage(handles.Origin);
-imdata1=rgb2gray(Image1);
-[m,n]=size(imdata1);
-
-%Set the cut-off frequency
-Fc=100; 
-
+imdata=getimage(handles.Origin);
+[m,n,z]=size(imdata);
+if (z==3)
+imdata=rgb2gray(imdata);
+[m,n,z]=size(imdata);
+end
+%Set the cut-off frequencydata=get(handles.slider4,'Value');
+data=get(handles.slider4,'Value');
 %Set the filter order
 N=10;
 
@@ -211,14 +214,14 @@ H=zeros(m,n);
 for i=1:m
     for j=1:n
         d = (i-p).^2+(j-q).^2;     
-        H(i,j) = 1/(1+((d/Fc/Fc).^(2*N)));
+        H(i,j) = 1/(1+((d/data/data).^(2*N)));
     end
 end
 
 
 %Input image in frequecy domain
 
-A_f = fftshift(fft2(imdata1));
+A_f = fftshift(fft2(imdata));
 
 %Apply Butterworth LPF
 
@@ -247,12 +250,14 @@ title('IIR LP Image');
 
 % --- Executes on button press in pushbutton5.
 function pushbutton5_Callback(hObject, eventdata, handles)
-Image1=getimage(handles.Origin);
-imdata=rgb2gray(Image1);
-[m,n]=size(imdata);
-
+imdata=getimage(handles.Origin);
+[m,n,z]=size(imdata);
+if (z==3)
+imdata=rgb2gray(imdata);
+[m,n,z]=size(imdata);
+end
 %Set the cut-off frequency
-Fc=20; 
+data=get(handles.slider4,'Value');
 
 %Set the filter order
 N=1;
@@ -268,7 +273,7 @@ for i=1:m
     for j=1:n
         d = (i-p).^2+(j-q).^2;
         if d~=0
-        H(i,j) = 1/(1+((Fc*Fc/d).^(2*N)));
+        H(i,j) = 1/(1+((data*data/d).^(2*N)));
         end
     end
 end
@@ -301,3 +306,99 @@ title('IIR HP Image');
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on slider movement.
+
+
+% --- Executes on slider movement.
+function slider3_Callback(hObject, eventdata, handles)
+% hObject    handle to slider3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+data=get(handles.slider3,'Value')
+data1=num2str(data)
+set(handles.edit3,'String',data1)
+% --- Executes during object creation, after setting all properties.
+function slider3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit3_Callback(hObject, eventdata, handles)
+% hObject    handle to edit3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit3 as text
+%        str2double(get(hObject,'String')) returns contents of edit3 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on slider movement.
+function slider4_Callback(hObject, eventdata, handles)
+% hObject    handle to slider4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+data=get(handles.slider4,'Value')
+data1=num2str(data)
+set(handles.edit3,'String',data1)
+
+% --- Executes during object creation, after setting all properties.
+function slider4_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end

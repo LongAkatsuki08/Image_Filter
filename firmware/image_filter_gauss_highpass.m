@@ -3,10 +3,14 @@ clc;
 
 %% Progarm to demonstrate Gaussian high pass filter
 imdata =imread('Lenna_(test_image).png');
-[m,n]=size(imdata);
+[m,n,z]=size(imdata);
+
+if(z==3)
+    imdata=rgb2gray(imdata);
+end
 
 %Set the cut-off frequency
-Fc=10;
+Fc=7;
 
 %Determine the centre of image
 p= round(m/2);

@@ -2,8 +2,8 @@ clear;
 clc;
 
 %% Program to demonstrate the butterworth high pass filtering
-%imdata = imread('0.jpg');
-imdata = rgb2gray(imread('2.jpg'));
+imdata = imread('0.jpg');
+% imdata = rgb2gray(imread('2.jpg'));
 [m,n] = size(imdata);
 %data_fft = fft2(imdata,m,n)
 %Define the filter kernel
