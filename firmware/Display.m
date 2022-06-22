@@ -22,7 +22,7 @@ function varargout = Display(varargin)
 
 % Edit the above text to modify the response to help Display
 
-% Last Modified by GUIDE v2.5 06-Jun-2022 15:00:19
+% Last Modified by GUIDE v2.5 11-Jun-2022 11:11:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -53,7 +53,23 @@ function Display_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for Display
 handles.output = hObject;
-
+set (gca, 'xtick' , [])
+set (gca, 'ytick' , [])
+axes(handles.Origin)
+set (gca, 'xtick' , [])
+set (gca, 'ytick' , [])
+axes(handles.Filtered1)
+set (gca, 'xtick' , [])
+set (gca, 'ytick' , [])
+axes(handles.Filtered2)
+set (gca, 'xtick' , [])
+set (gca, 'ytick' , [])
+set (gca, 'xtick' , [])
+set (gca, 'ytick' , [])
+axes(handles.Filtered3)
+set (gca, 'xtick' , [])
+set (gca, 'ytick' , [])
+axes(handles.Filtered4)
 % Update handles structure
 guidata(hObject, handles);
 
@@ -401,4 +417,27 @@ function slider4_CreateFcn(hObject, eventdata, handles)
 % Hint: slider controls usually have a light gray background.
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on selection change in listbox1.
+function listbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox1
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
