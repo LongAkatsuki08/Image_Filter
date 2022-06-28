@@ -10,7 +10,7 @@ if(z==3)
 end
 
 %Set the cut-off frequency
-Fc=5;
+Fc=1;
 
 %Determine the centre of image
 p= round(m/2);
