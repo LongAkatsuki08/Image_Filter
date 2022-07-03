@@ -165,7 +165,7 @@ for i=1:m
         H(i,j) = exp(-d/2/data/data);
     end
 end
-H=H-1;
+H=1-H;
 
 %Input image in frequecy domain
 

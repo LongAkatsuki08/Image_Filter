@@ -2,8 +2,12 @@ clear;
 clc;
 
 %% Program to demonstrate the butterworth high pass filtering
-imdata =imread('0.jpg');
-[m,n]=size(imdata);
+imdata =imread('1.jpg');
+[m,n,z]=size(imdata);
+if (z==3)
+imdata=rgb2gray(imdata);
+[m,n,z]=size(imdata);
+end
 
 %Set the cut-off frequency
 Fc=20; 
